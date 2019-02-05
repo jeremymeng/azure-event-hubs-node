@@ -126,7 +126,7 @@ export namespace ConnectionContext {
           ? context.connection.error
           : undefined;
       if (connectionError) {
-        log.default(
+        log.error(
           "[%s] Error (context.connection.error) occurred on the amqp connection: %O",
           connectionContext.connection.id,
           connectionError
@@ -134,7 +134,7 @@ export namespace ConnectionContext {
       }
       const contextError = context.error;
       if (contextError) {
-        log.default(
+        log.error(
           "[%s] Error (context.error) occurred on the amqp connection: %O",
           connectionContext.connection.id,
           contextError
@@ -151,12 +151,12 @@ export namespace ConnectionContext {
       };
       // The connection should always be brought back up if the sdk did not call connection.close()
       // and there was atleast one sender/receiver link on the connection before it went down.
-      log.default("[%s] state: %O", connectionContext.connection.id, state);
+      log.error("[%s] state: %O", connectionContext.connection.id, state);
       if (
         !state.wasConnectionCloseCalled &&
         (state.numSenders || state.numReceivers)
       ) {
-        log.default(
+        log.error(
           "[%s] connection.close() was not called from the sdk and there were some " +
             "sender or receiver links or both. We should reconnect.",
           connectionContext.connection.id
@@ -166,14 +166,14 @@ export namespace ConnectionContext {
         for (const senderName of Object.keys(connectionContext.senders)) {
           const sender = connectionContext.senders[senderName];
           if (!sender.isConnecting) {
-            log.default(
+            log.error(
               "[%s] calling detached on sender '%s' with address '%s'.",
               connectionContext.connection.id,
               sender.name,
               sender.address
             );
             sender.detached(connectionError || contextError).catch((err) => {
-              log.default(
+              log.error(
                 "[%s] An error occurred while reconnecting the sender '%s' with adress '%s' %O.",
                 connectionContext.connection.id,
                 sender.name,
@@ -182,7 +182,7 @@ export namespace ConnectionContext {
               );
             });
           } else {
-            log.default(
+            log.error(
               "[%s] sender '%s' with address '%s' is already reconnecting. Hence not " +
                 "calling detached on the sender.",
               connectionContext.connection.id,
@@ -195,14 +195,14 @@ export namespace ConnectionContext {
         for (const receiverName of Object.keys(connectionContext.receivers)) {
           const receiver = connectionContext.receivers[receiverName];
           if (!receiver.isConnecting) {
-            log.default(
+            log.error(
               "[%s] calling detached on receiver '%s' with address '%s'.",
               connectionContext.connection.id,
               receiver.name,
               receiver.address
             );
             receiver.detached(connectionError || contextError).catch((err) => {
-              log.default(
+              log.error(
                 "[%s] An error occurred while reconnecting the receiver '%s' with adress '%s' %O.",
                 connectionContext.connection.id,
                 receiver.name,
@@ -211,7 +211,7 @@ export namespace ConnectionContext {
               );
             });
           } else {
-            log.default(
+            log.error(
               "[%s] receiver '%s' with address '%s' is already reconnecting. Hence not " +
                 "calling detached on the receiver.",
               connectionContext.connection.id,

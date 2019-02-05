@@ -178,7 +178,7 @@ export class LinkEntity {
       try {
         await this._negotiateClaim(true);
       } catch (err) {
-        log.default(
+        log.error(
           "[%s] %s '%s' with address %s, an error occurred while renewing the token: %O",
           this._context.connectionId,
           this._type,
@@ -221,7 +221,7 @@ export class LinkEntity {
           this.address
         );
       } catch (err) {
-        log.default(
+        log.error(
           "[%s] An error occurred while closing the %s '%s' with address '%s': %O",
           this._context.connectionId,
           this._type,
