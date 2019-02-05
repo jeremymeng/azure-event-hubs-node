@@ -9,7 +9,7 @@ import {
   MessagingError,
   delay
 } from "../lib";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
 const connectionString = "EVENTHUB_CONNECTION_STRING";
