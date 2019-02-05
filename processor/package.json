@@ -39,6 +39,7 @@
     "@types/uuid": "^3.4.3",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "cross-env": "^5.2.0",
     "dotenv": "^5.0.1",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2",
@@ -66,7 +67,7 @@
   "scripts": {
     "tslint": "tslint -p . -c tslint.json",
     "tsc": "tsc",
-    "prebuild": "rimraf dist && rimraf typings",
+    "prebuild": "rimraf dist && rimraf dist-esm && rimraf test-dist && rimraf typings",
     "build": "npm run tslint && tsc -p . && rollup -c",
     "build-browser": "tsc -p . && cross-env ONLY_BROWSER=true rollup -c",
     "build-node": "tsc -p . && cross-env ONLY_NODE=true rollup -c",
