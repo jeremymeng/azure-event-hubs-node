@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 import { EventHubClient, EventData, EventPosition } from "../lib";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
 const connectionString = "EVENTHUB_CONNECTION_STRING";
@@ -17,7 +17,7 @@ async function main(): Promise<void> {
   });
   console.log(">>> EventDataObjects: ", result);
   let i = 0;
-  for (let data of result) {
+  for (const data of result) {
     console.log(
       "### Actual message (%d):",
       ++i,
