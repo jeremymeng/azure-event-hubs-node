@@ -38,6 +38,8 @@ export function nodeConfig(test = false) {
     ]
   };
 
+  baseConfig.external.push("crypto");
+
   if (test) {
     // entry point is every test file
     baseConfig.input = "dist-esm/tests/**/*.spec.js";
@@ -47,7 +49,7 @@ export function nodeConfig(test = false) {
     baseConfig.output.file = "test-dist/index.js";
 
     // mark assert as external
-    baseConfig.external.push("assert", "fs", "path");
+    baseConfig.external.push("assert", "fs", "path", "os", "tty", "child_process");
 
     baseConfig.onwarn = (warning) => {
       if (warning.code === "THIS_IS_UNDEFINED") {
