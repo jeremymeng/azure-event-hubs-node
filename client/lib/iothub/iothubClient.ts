@@ -114,7 +114,7 @@ export class IotHubClient {
       const msg = `An error occurred while closing the connection "${
         context.connectionId
       }": ${err.stack}`;
-      log.default(msg);
+      log.error(msg);
     }
   }
 
