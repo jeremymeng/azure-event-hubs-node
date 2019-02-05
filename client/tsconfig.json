@@ -40,6 +40,6 @@
   ],
   "include": [
     "./lib/**/*.ts",
-    "./test/**/*.ts",
+    "./tests/**/*.ts",
   ]
 }
