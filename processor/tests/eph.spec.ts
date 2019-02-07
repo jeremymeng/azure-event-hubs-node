@@ -125,11 +125,11 @@ describe("EPH", function () {
         };
         await host.start(onMessage, onError);
         while (!doneCheckpointing) {
-          debug("Not done checkpointing -> %s, sleeping for 10 more seconds.", doneCheckpointing);
-          await delay(10000);
+          debug("Not done checkpointing -> %s, sleeping for 2 more seconds.", doneCheckpointing);
+          await delay(2000);
         }
-        debug("sleeping for 10 more seconds..");
-        await delay(10000);
+        debug("WHY?sleeping for 10 more seconds..");
+        //await delay(10000);
         const stringContent = await host["_context"].blobReferenceByPartition["0"].getContent();
         const content = JSON.parse(stringContent);
         debug("Fetched content from blob is: %o", content);
@@ -250,7 +250,7 @@ describe("EPH", function () {
         debug(">>>> Starting my-eph-1");
         await host.start(onMessage, onError);
         while (count < ids.length) {
-          await delay(10000);
+          await delay(2000);
           debug(">>>> number of partitionIds: %d, count: %d", ids.length, count);
         }
         await host.stop();
@@ -281,11 +281,11 @@ describe("EPH", function () {
         debug(">>>> Starting my-eph-2");
         await host.start(onMessage2, onError2);
         while (count2 < ids.length) {
-          await delay(10000);
+          await delay(2000);
           debug(">>>> number of partitionIds: %d, count: %d", ids.length, count);
         }
-        debug(">>>>>> sleeping for 10 more seconds....");
-        await delay(10000);
+        debug("WHY?>>>>>> sleeping for 10 more seconds....");
+        //await delay(10000);
         await host.stop();
         await ehc.close();
         if (count2 > ids.length) {
@@ -352,8 +352,8 @@ describe("EPH", function () {
           debug(">>> [%s] currently receiving messages from partitions : %o", hostName,
             hostByName[hostName].receivingFromPartitions);
         }
-        debug(">>> Sleeping for another 15 seconds.")
-        await delay(15000);
+        debug("WHY?>>> Sleeping for another 15 seconds.")
+        //await delay(15000);
         const hostToPartition = getReceivingFromPartitionsForAllEph();
         for (const host in hostToPartition) {
           should.equal(Array.isArray(hostToPartition[host]), true);
