@@ -90,12 +90,12 @@ describe("EventHub Receiver", function () {
       }
       await client.send(ed, partitionId);
       debug(">>>>>>> Sent the new message after creating the receiver. We should only receive this message.");
-      const datas = await breceiver.receive(10, 5);
+      const datas = await breceiver.receive(10, 2);
       debug("received messages: ", datas);
       datas.length.should.equal(1);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 10);
+      const datas2 = await breceiver.receive(10, 5);
       datas2.length.should.equal(0);
     });
 
@@ -105,7 +105,7 @@ describe("EventHub Receiver", function () {
       debug(`Creating new receiver with last enqueued offset: "${pInfo.lastEnqueuedOffset}".`);
       breceiver = BatchingReceiver.create((client as any)._context, parseInt(partitionId), { eventPosition: EventPosition.fromOffset(pInfo.lastEnqueuedOffset) });
       debug("Establishing the receiver link...");
-      const d = await breceiver.receive(10, 5);
+      const d = await breceiver.receive(10, 2);
       d.length.should.equal(0);
       // send a new message. We should only receive this new message.
       const uid = uuid();
@@ -117,12 +117,12 @@ describe("EventHub Receiver", function () {
       }
       await client.send(ed, "0");
       debug("Sent the new message after creating the receiver. We should only receive this message.");
-      const datas = await breceiver.receive(10, 10);
+      const datas = await breceiver.receive(10, 5);
       debug("received messages: ", datas);
       datas.length.should.equal(1);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 10);
+      const datas2 = await breceiver.receive(10, 5);
       datas2.length.should.equal(0);
     });
 
@@ -150,13 +150,13 @@ describe("EventHub Receiver", function () {
       debug(`Creating new receiver with last enqueued offset: "${pInfo.lastEnqueuedOffset}".`);
       breceiver = BatchingReceiver.create((client as any)._context, partitionId, { eventPosition: EventPosition.fromOffset(pInfo.lastEnqueuedOffset, true) });
       debug("We should receive the last 2 messages.");
-      const datas = await breceiver.receive(10, 10);
+      const datas = await breceiver.receive(10, 2);
       debug("received messages: ", datas);
       datas.length.should.equal(2);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       datas[1].applicationProperties!.stamp.should.equal(uid2);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 5);
+      const datas2 = await breceiver.receive(10, 2);
       datas2.length.should.equal(0);
     });
 
@@ -166,7 +166,7 @@ describe("EventHub Receiver", function () {
       debug(`Creating new receiver with last enqueued time: "${pInfo.lastEnqueuedTimeUtc}".`);
       breceiver = BatchingReceiver.create((client as any)._context, partitionId, { eventPosition: EventPosition.fromEnqueuedTime(pInfo.lastEnqueuedTimeUtc) });
       debug("Establishing the receiver link...");
-      const d = await breceiver.receive(10, 5);
+      const d = await breceiver.receive(10, 2);
       d.length.should.equal(0);
       // send a new message. We should only receive this new message.
       const uid = uuid();
@@ -178,12 +178,12 @@ describe("EventHub Receiver", function () {
       }
       await client.send(ed, partitionId);
       debug("Sent the new message after creating the receiver. We should only receive this message.");
-      const datas = await breceiver.receive(10, 10);
+      const datas = await breceiver.receive(10, 5);
       debug("received messages: ", datas);
       datas.length.should.equal(1);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 5)
+      const datas2 = await breceiver.receive(10, 2)
       datas2.length.should.equal(0);
     });
 
@@ -202,12 +202,12 @@ describe("EventHub Receiver", function () {
       debug("Sent the new message after getting the partition runtime information. We should only receive this message.");
       debug(`Creating new receiver with last enqueued sequence number: "${pInfo.lastSequenceNumber}".`);
       breceiver = BatchingReceiver.create((client as any)._context, partitionId, { eventPosition: EventPosition.fromSequenceNumber(pInfo.lastSequenceNumber) });
-      const datas = await breceiver.receive(10, 10);
+      const datas = await breceiver.receive(10, 5);
       debug("received messages: ", datas);
       datas.length.should.equal(1);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 5);
+      const datas2 = await breceiver.receive(10, 2);
       datas2.length.should.equal(0);
     });
 
@@ -235,13 +235,13 @@ describe("EventHub Receiver", function () {
       debug(`Creating new receiver with last sequence number: "${pInfo.lastSequenceNumber}".`);
       breceiver = BatchingReceiver.create((client as any)._context, partitionId, { eventPosition: EventPosition.fromSequenceNumber(pInfo.lastSequenceNumber, true) });
       debug("We should receive the last 2 messages.");
-      const datas = await breceiver.receive(10, 10);
+      const datas = await breceiver.receive(10, 5);
       debug("received messages: ", datas);
       datas.length.should.equal(2);
       datas[0].applicationProperties!.stamp.should.equal(uid);
       datas[1].applicationProperties!.stamp.should.equal(uid2);
       debug("Next receive on this partition should not receive any messages.");
-      const datas2 = await breceiver.receive(10, 5);
+      const datas2 = await breceiver.receive(10, 2);
       datas2.length.should.equal(0);
     });
   });
