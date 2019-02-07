@@ -346,7 +346,7 @@ describe("EPH", function (): void {
             debug(">>> [%s] Rx message from '%s': '%O'", hostName, context.partitionId, data);
             should.equal(sendDataByPartition[context.partitionId].body, data.body);
           };
-          await hostByName[hostName].start(onMessage, onError);
+          hostByName[hostName].start(onMessage, onError).catch((err) => { done(err); });
           debug(">>> Sleeping for 8 seconds after starting %s.", hostName);
           await delay(8000);
           debug(">>> [%s] currently receiving messages from partitions : %o", hostName,
