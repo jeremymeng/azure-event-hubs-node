@@ -64,16 +64,6 @@ describe("EventHubClient", function(): void {
       });
     });
 
-    it("throws when it cannot find the Event Hub path", function(): void {
-      const test = function(): EventHubClient {
-        return EventHubClient.createFromConnectionString("abc");
-      };
-      test.should.throw(
-        Error,
-        `Either provide "path" or the "connectionString": "abc", must contain EntityPath="<path-to-the-entity>".`
-      );
-    });
-
     it("creates an EventHubClient from a connection string", function(): void {
       const client = EventHubClient.createFromConnectionString(
         "Endpoint=sb://a;SharedAccessKeyName=b;SharedAccessKey=c;EntityPath=d"

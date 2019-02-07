@@ -373,12 +373,6 @@ export class EventHubClient {
     }
     const config = EventHubConnectionConfig.create(connectionString, path);
 
-    if (!config.entityPath) {
-      throw new Error(
-        `Either the connectionString must have "EntityPath=<path-to-entity>" or ` +
-          `you must provide "path", while creating the client`
-      );
-    }
     return new EventHubClient(config, options);
   }
 
