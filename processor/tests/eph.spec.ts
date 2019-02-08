@@ -9,7 +9,7 @@ import debugModule from "debug";
 const should = chai.should();
 const debug = debugModule("azure:eph:eph-spec");
 import { EventHubClient, EventData, EventPosition, delay, Dictionary } from "@azure/event-hubs";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 import { PartitionContext, OnReceivedMessage, EventProcessorHost, OnReceivedError } from "../lib";
 dotenv.config();
 
