@@ -8,7 +8,7 @@ chai.use(chaiAsPromised);
 import debugModule from "debug";
 const should = chai.should();
 const debug = debugModule("azure:eph:eph-spec");
-import { EventHubClient, EventData, EventPosition, delay, Dictionary } from "@azure/event-hubs";
+import { EventHubClient, EventData, EventPosition, delay, Dictionary, Delivery } from "@azure/event-hubs";
 import * as dotenv from "dotenv";
 import { PartitionContext, OnReceivedMessage, EventProcessorHost, OnReceivedError } from "../lib";
 dotenv.config();
@@ -198,7 +198,7 @@ describe("EPH", function (): void {
         const leasecontainerName = EventProcessorHost.createHostName("tc");
         debug(">>>>> Lease container name: %s", leasecontainerName);
         async function sendAcrossAllPartitions(ehc: EventHubClient, ids: string[]): Promise<Dictionary<EventData>> {
-          const result: Promise<any>[] = [];
+          const result: Promise<Delivery>[] = [];
           const idMessage: Dictionary<EventData> = {};
           for (const id of ids) {
             const data = { body: "Test Message - " + id, properties: { message_id: msgId } };
