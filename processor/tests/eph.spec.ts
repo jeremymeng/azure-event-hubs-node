@@ -26,6 +26,7 @@ describe("EPH", function (): void {
   const storageConnString = process.env.STORAGE_CONNECTION_STRING;
   const hubName = process.env.EVENTHUB_NAME;
   let host: EventProcessorHost;
+  let ehc: EventHubClient;
 
   describe("user-agent", function (): void {
 
@@ -42,7 +43,7 @@ describe("EPH", function (): void {
       const context = host["_context"];
       const ua = "/js-event-processor-host=1.0.5";
       context.userAgent.should.equal(ua);
-      const ehc: EventHubClient = context.getEventHubClient();
+      ehc = context.getEventHubClient();
       const properties = ehc["_context"].connection.options.properties;
       should.equal(properties["user-agent"], `/js-event-hubs,${ua}`);
       should.equal(properties.product, "MSJSClient");
@@ -64,7 +65,7 @@ describe("EPH", function (): void {
       const context = host["_context"];
       const ua = "/js-event-processor-host=1.0.5";
       context.userAgent.should.equal(`${ua},${customua}`);
-      const ehc: EventHubClient = context.getEventHubClient();
+      ehc = context.getEventHubClient();
       const properties = ehc["_context"].connection.options.properties;
       should.equal(properties["user-agent"], `/js-event-hubs,${ua},${customua}`);
       should.equal(properties.product, "MSJSClient");
@@ -73,6 +74,12 @@ describe("EPH", function (): void {
   });
 
   describe("single", function (): void {
+    afterEach("closing event hub resources", async () => {
+      debug(">>>>> single closing host and client");
+      await host.stop();
+      await ehc.close();
+    });
+
     it("should checkpoint messages in order", function (done: Mocha.Done): void {
       const test = async () => {
         host = EventProcessorHost.createFromConnectionString(
@@ -91,7 +98,7 @@ describe("EPH", function (): void {
           const obj: EventData = { body: `Hello foo ${i}` };
           datas.push(obj);
         }
-        const ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
+        ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
         await ehc.sendBatch(datas, "0");
         await ehc.close();
         debug("Sent batch message successfully");
@@ -123,8 +130,8 @@ describe("EPH", function (): void {
         };
         await host.start(onMessage, onError);
         while (!doneCheckpointing) {
-          debug("Not done checkpointing -> %s, sleeping for 10 more seconds.", doneCheckpointing);
-          await delay(10000);
+          debug("Not done checkpointing -> %s, sleeping for 5 more seconds.", doneCheckpointing);
+          await delay(5000);
         }
         debug("sleeping for 10 more seconds..");
         await delay(10000);
@@ -140,7 +147,7 @@ describe("EPH", function (): void {
 
     it("should checkpoint a single received event.", function (done: Mocha.Done): void {
       const msgId = uuid();
-      const ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
+      ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
       ehc.getPartitionIds().then((ids) => {
         debug(">>> Received partition ids: ", ids);
         host = EventProcessorHost.createFromConnectionString(
@@ -183,7 +190,9 @@ describe("EPH", function (): void {
             done(err);
           };
           return host.start(onMessage, onError);
-        }).catch((err) => {
+        }).catch(async (err) => {
+          await ehc.close();
+          await host.stop();
           done(err);
         });
       }).catch((err) => {
@@ -194,7 +203,7 @@ describe("EPH", function (): void {
     it("should be able to receive messages from the checkpointed offset.", function (done: Mocha.Done): void {
       const test = async () => {
         const msgId = uuid();
-        const ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
+        ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
         const leasecontainerName = EventProcessorHost.createHostName("tc");
         debug(">>>>> Lease container name: %s", leasecontainerName);
         async function sendAcrossAllPartitions(ehc: EventHubClient, ids: string[]): Promise<Dictionary<EventData>> {
@@ -250,7 +259,7 @@ describe("EPH", function (): void {
         debug(">>>> Starting my-eph-1");
         await host.start(onMessage, onError);
         while (count < ids.length) {
-          await delay(10000);
+          await delay(5000);
           debug(">>>> number of partitionIds: %d, count: %d", ids.length, count);
         }
         await host.stop();
@@ -281,7 +290,7 @@ describe("EPH", function (): void {
         debug(">>>> Starting my-eph-2");
         await host.start(onMessage2, onError2);
         while (count2 < ids.length) {
-          await delay(10000);
+          await delay(5000);
           debug(">>>> number of partitionIds: %d, count: %d", ids.length, count);
         }
         debug(">>>>>> sleeping for 10 more seconds....");
@@ -299,7 +308,7 @@ describe("EPH", function (): void {
   describe("multiple", function (): void {
     it("should be able to run multiple eph successfully.", function (done: Mocha.Done): void {
       const test = async () => {
-        const ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
+        ehc = EventHubClient.createFromConnectionString(ehConnString!, hubName!);
         const containerName: string = `sharedhost-${uuid()}`;
         const now = Date.now();
         const hostByName: Dictionary<EventProcessorHost> = {};
