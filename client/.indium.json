@@ -1,0 +1,13 @@
+{
+  "configurations": [
+    {
+      "name": "client unit tests",
+      "type": "node",
+      "command": "node ./node_modules/mocha/bin/_mocha -t 50000 test-dist/index.js",
+      "inspect-brk": true,
+      "sourceMapPathOverrides": {
+        "../": "/home/azureuser/git/azure-event-hubs-node/client/"
+      }
+    }
+  ]
+}
